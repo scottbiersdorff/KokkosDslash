@@ -267,7 +267,9 @@ struct VNode<MGComplex<float>,4> {
   VecType permute(const MaskType& mask, const VecTypeGlobal& vec_in)
   {
 	VecType vec_out;
-	vec_out._vdata = _mm256_permutexvar_ps(mask.maskvalue, vec_in._vdata);
+        // NVIDIA FIX: The `_mm256_permutexvar_ps` intrinsic is AVX512 specific, this section is used for AVX machines.            
+        // vec_out._vdata = _mm256_permutexvar_ps(mask.maskvalue, vec_in._vdata);            
+        vec_out._vdata = _mm256_permutevar8x32_ps(vec_in._vdata, mask.maskvalue);
 	return vec_out;
   }
 }; // struct vector length = 8
